@@ -5,14 +5,14 @@ var request = require('request');
 
 app.use(express.static('public'));
 app.get("/",(req,res)=>{
-
-var a1 = 'https://anibit.xyz';
-request(a1, function (error, response, body) {
+if(req.query.url){
+var str1 = Buffer.from(req.query.url, 'base64').toString('utf-8');
+request(str1, function (error, response, body) {
 if (!error && response.statusCode == 200) {
 res.send(body);
 }
 });	
-
+}
 });
 
 app.listen(port);

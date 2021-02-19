@@ -1,28 +1,49 @@
-var express = require("express");
-var app     = express();
-var port    = process.env.PORT || 3000;
+var express = require('express');
 var request = require('request');
 
-app.use(express.static('public'));
-app.get("/",(req,res)=>{
+var app = express();
+app.use(express.json());
+
+
+app.get('/', (req, res) => {
 if(req.query.url){
 var str1 = Buffer.from(req.query.url, 'base64').toString('utf-8');
-request({
-url:str1,
+
+		
+request(str1, function (error, response, body) {
+if(!error && response.statusCode == 200){
+		console.log("ok request 2...");
+		var t1='<div id="player"><script>contents';
+		var t2=';</script></div>';
+		var b1=body.substring(body.search(t1),body.search(t2)).substr(t1.length+2);
+		var b2=b1.substring(0,b1.length-2);
+		var b3=b2.split("','");
+
+request.post({
+url: 'https://player.marimo.me/demo/s/'+b3[1]+'/',
+body: 'v='+b3[0]+'&r='+b3[2],
 headers: {
 'Referer': str1,
-'Accept': 'text/html, */*; q=0.01',
-'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-'sec-ch-ua-mobile': '?0',
-'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
-'X-Requested-With': 'XMLHttpRequest'
+'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 }
-}, function (error, response, body) {
-if (!error && response.statusCode == 200) {
-res.send(body);
-}
-});	
+}, function(error1, response1, body1){
+if(!error1 && response1.statusCode == 200){
+res.send(body1);
+}else{
+res.send("Error post: "+response1.statusCode);	
 }
 });
 
-app.listen(port);
+
+}else{
+res.send("Error get: "+response.statusCode);	
+}
+})	
+
+
+}
+});
+
+
+var port = process.env.PORT || 80;
+app.listen(port, () => console.log(`Listening on port${port}...`) );

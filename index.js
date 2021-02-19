@@ -26,11 +26,11 @@ headers: {
 'Referer': str1,
 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 }
-}, function(error1, response1, body1){
-if(!error1 && response1.statusCode == 200){
-res.send(body1);
+}, function(err, res1, body){
+if(!err && res1.statusCode == 200){
+res.send(body);
 }else{
-res.send("Error post: "+response1.statusCode);	
+res.send("Error post: "+res1.statusCode);	
 }
 });
 
